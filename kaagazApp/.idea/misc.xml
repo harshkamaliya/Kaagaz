@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Harsh/Kaagaz/kaagazApp/app/src/main/res/layout/activity_home_page.xml" value="0.18" />
         <entry key="..\:/Users/Harsh/Kaagaz/kaagazApp/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/Harsh/Kaagaz/kaagazApp/app/src/main/res/layout/gridlayout.xml" value="0.1" />
+        <entry key="..\:/Users/Harsh/Kaagaz/kaagazApp/app/src/main/res/layout/item_child.xml" value="0.22" />
+        <entry key="..\:/Users/Harsh/Kaagaz/kaagazApp/app/src/main/res/layout/item_parent.xml" value="0.1" />
       </map>
     </option>
   </component>
