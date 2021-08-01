@@ -15,6 +15,7 @@ import com.example.camerax.CameraApplication
 import com.example.camerax.CameraViewModelFactory
 import com.example.camerax.constrain.ConstantsData
 import com.example.camerax.databinding.ActivityMainBinding
+import com.example.camerax.model.CameraEntity
 import com.example.camerax.viewmodel.CameraViewModel
 import java.io.File
 import java.nio.ByteBuffer
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var cameraViewModel: CameraViewModel
     private lateinit var albumName:String
+   private var count:Int=0;
 
 
 
@@ -42,6 +44,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val appClass = application as CameraApplication
+        val userRepository = appClass.cameraRepository
+        val userViewModelFactory = CameraViewModelFactory(userRepository)
+
+        cameraViewModel=ViewModelProviders.of(this,userViewModelFactory).get(CameraViewModel::class.java)
+
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -79,10 +87,11 @@ class MainActivity : AppCompatActivity() {
         val imageCapture = imageCapture ?: return
 
         // Create time-stamped output file to hold the image
+        val imageName=  SimpleDateFormat(FILENAME_FORMAT, Locale.US
+        ).format(System.currentTimeMillis()) +".jpg"
         val photoFile = File(
-            outputDirectory,
-            SimpleDateFormat(FILENAME_FORMAT, Locale.US
-            ).format(System.currentTimeMillis()) +".jpg")
+            outputDirectory,imageName
+          )
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
@@ -92,14 +101,20 @@ class MainActivity : AppCompatActivity() {
         imageCapture.takePicture(
             outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
+
                     Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
-                   // createDatabase()
+                  //  createDatabase()
+                    val cameraEntity= CameraEntity(outputDirectory.toString(),imageName,savedUri.toString())
+
+                    cameraViewModel.addUser(cameraEntity)
+
 
                     //showDialogBox()
+
                     val msg = "Photo capture succeeded: $savedUri"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
@@ -130,9 +145,6 @@ class MainActivity : AppCompatActivity() {
 //            }
 
         }
-
-
-
         return if (mediaDir != null && mediaDir.exists())
             mediaDir else filesDir
 
@@ -214,11 +226,21 @@ class MainActivity : AppCompatActivity() {
 
         cameraViewModel=ViewModelProviders.of(this,userViewModelFactory).get(CameraViewModel::class.java)
 
+
     }
 
+    override fun onResume() {
+        super.onResume()
+//        binding.cameraCaptureButton.setOnClickListener {
+//            takePhoto()
+//        }
 
+         getOutputDirectory()
+        count++
 
+      //  cameraExecutor = Executors.newSingleThreadExecutor()
 
+    }
 
 
 

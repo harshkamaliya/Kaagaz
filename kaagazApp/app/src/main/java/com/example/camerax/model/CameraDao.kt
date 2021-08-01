@@ -18,5 +18,9 @@ interface CameraDao {
     @Query("DELETE FROM posts")
     fun deleteAllPostsDB()
 
+//    @Query("SELECT * FROM posts")
+//    fun getDBPosts(): LiveData<List<CameraEntity>>
+
+
 
 }
