@@ -1,27 +1,29 @@
 package com.example.camerax.ui
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import androidx.core.app.ActivityCompat
-
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-
-import androidx.core.content.ContextCompat
-import java.util.concurrent.Executors
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
+import com.example.camerax.CameraApplication
+import com.example.camerax.CameraViewModelFactory
 import com.example.camerax.constrain.ConstantsData
 import com.example.camerax.databinding.ActivityMainBinding
-
+import com.example.camerax.viewmodel.CameraViewModel
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
-
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
+
 typealias lumaListener = (luma: Double) -> Unit
 
 
@@ -31,6 +33,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var binding: ActivityMainBinding
+    private lateinit var cameraViewModel: CameraViewModel
+    private lateinit var albumName:String
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +59,18 @@ class MainActivity : AppCompatActivity() {
         outputDirectory = getOutputDirectory()
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+      //database
+
+
+//
+//        val cameraEntity:CameraEntity(
+//
+//
+//        )
+//        cameraViewModel.addUser(cameraEntity)
+
+
     }
     
 
@@ -65,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         val photoFile = File(
             outputDirectory,
             SimpleDateFormat(FILENAME_FORMAT, Locale.US
-            ).format(System.currentTimeMillis()) + ".jpg")
+            ).format(System.currentTimeMillis()) +".jpg")
 
         // Create output options object which contains file + metadata
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
@@ -80,6 +97,9 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val savedUri = Uri.fromFile(photoFile)
+                   // createDatabase()
+
+                    //showDialogBox()
                     val msg = "Photo capture succeeded: $savedUri"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
@@ -96,10 +116,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun getOutputDirectory(): File {
         val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
+
+            File(it, "folders- ${System.currentTimeMillis()}").apply {
+                mkdirs() }
+//
+//            for (i in 0 until mediaDir)
+//            {
+//                File filePath= new File(i);
+//                File[] fileList = filePath.listFiles();
+//                String name = fileList [0].toString();
+//
+//
+//            }
+
+        }
+
+
+
         return if (mediaDir != null && mediaDir.exists())
             mediaDir else filesDir
+
     }
+
 
 
     companion object {
@@ -169,10 +207,21 @@ class MainActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
+    private fun createDatabase() {
+        val appClass = application as CameraApplication
+        val userRepository = appClass.cameraRepository
+        val userViewModelFactory = CameraViewModelFactory(userRepository)
+
+        cameraViewModel=ViewModelProviders.of(this,userViewModelFactory).get(CameraViewModel::class.java)
+
     }
+
+
+
+
+
+
+
 
     private class LuminosityAnalyzer(private val listener: lumaListener) : ImageAnalysis.Analyzer {
 
@@ -196,6 +245,48 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
+    }
+
+//    fun showDialogBox(){
+//
+//        val builder1 = AlertDialog.Builder(this)
+//        builder1.setMessage("Write your message here.")
+//        builder1.setTitle("Album Name")
+//        val current_time=Calendar.getInstance().time
+//        val input=EditText(this)
+//        input.setHint("Enter Album Name")
+//        input.inputType=InputType.TYPE_CLASS_TEXT
+//        builder1.setView(input)
+//        //set up the button
+//
+//        builder1.setPositiveButton(
+//            "Yes",DialogInterface.OnClickListener{
+//                dialog, which ->
+//                 albumName = input.text.toString()
+//                val cameraEntity=CameraEntity(current_time.toString(),albumName )
+//
+//            }
+//
+//
+//        )
+//
+//
+//
+//        builder1.setCancelable(true)
+//
+//
+//
+//        builder1.setNegativeButton(
+//            "No"
+//        ) { dialog, id -> dialog.cancel() }
+//
+//        val alert11 = builder1.create()
+//        alert11.show()
+//
+//    }
 
 
 

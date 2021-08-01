@@ -1,4 +1,10 @@
 <resources>
+
     <string name="app_name">CameraX</string>
     <string name="take_photo">Take Photo</string>
+    <string name="photo"> your photo</string>
+    <string name="move_forward">Move forward</string>
+    <string name="click_photo">click photo</string>
+
+
 </resources>

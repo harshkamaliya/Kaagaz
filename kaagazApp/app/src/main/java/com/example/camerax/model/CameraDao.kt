@@ -1,5 +1,6 @@
 package com.example.camerax.model
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -12,7 +13,7 @@ interface CameraDao {
     fun setDBPosts(cameraEntity: CameraEntity)
 
     @Query("SELECT * FROM posts")
-    fun getDBPosts(): List<CameraEntity>
+    fun getDBPosts(): LiveData<List<CameraEntity>>
 
     @Query("DELETE FROM posts")
     fun deleteAllPostsDB()

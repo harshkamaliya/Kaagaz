@@ -7,10 +7,15 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "Posts")
 data class CameraEntity(
-    @ColumnInfo(name = "image") var image : String,
-    @ColumnInfo(name = "subTitle") var subTitle : String,
+    @ColumnInfo(name = "image_name") var name : String,
+    @ColumnInfo(name="time_stamp") var time:String,
+    @ColumnInfo(name = "album_name") var album: String,
+    @ColumnInfo(name="path") var path:String,)
+{
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Int? = null
-)
+}
+
+
 
 
 
